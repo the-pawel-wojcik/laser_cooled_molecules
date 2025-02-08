@@ -1,8 +1,8 @@
 import argparse
-import matplotlib.pyplot as plt
-import numpy as np
 from dataclasses import dataclass
 from typing import Iterator
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 @dataclass
@@ -14,7 +14,7 @@ class Molecule:
 diatomics = [
         Molecule(name='SrF', year=2010),
         Molecule(name='YO', year=2013),
-        Molecule(name='CaF', year=2016),
+        Molecule(name='CaF', year=2014),
 ]
 
 triatomics = [
@@ -30,6 +30,11 @@ polyatomics = [
 def get_args():
     parser = argparse.ArgumentParser(
         description='Display number of laser-cooled molecules over the years.',
+    )
+    parser.add_argument(
+        '--save',
+        action='store_true',
+        default=False,
     )
     args = parser.parse_args()
     return args
@@ -61,7 +66,7 @@ def accumulate_by_year(yit: Iterator[int], mit: Iterator[Molecule]):
 
 
 def main():
-    get_args()
+    args = get_args()
     year_of_molecules = [
         molecule.year for molecule in diatomics + triatomics + polyatomics
     ]
@@ -73,13 +78,12 @@ def main():
         dtype=int,
     )
 
-    width = 4
+    width = 2.5
     fig = plt.figure(
         figsize=(16/9 * width, width),
         layout='constrained',
     )
     ax = fig.subplots()
-
 
     diatomics_by_year = accumulate_by_year(
         yit=iter(years),
@@ -141,27 +145,14 @@ def main():
         label='diatomics',
     )
 
+    ax.xaxis.set_label_text('Year')
+    ax.yaxis.set_label_text('# of laser-cooled molecules')
+
     plt.legend()
-    plt.show()
-    return
-
-    plt.rcParams['date.converter'] = 'concise'
-    plt.rcParams['figure.figsize'] = [4.8 * 16 / 9, 4.8]
-    fig = plt.figure(layout='constrained')
-    ax = fig.add_axes([0.075, 0.10, 0.7, 0.8])
-
-    years = [i['date'] for i in parsed_data_list]
-    ys = [0 for i in parsed_data_list]
-
-    for i, user in enumerate(users):
-        color = COLORS[i % len(COLORS)]
-        ys = add_user_to_the_plot(ax, years, ys, parsed_data_list, user, color)
-
-    ax.set_ylim([0.0, 1.0])
-    ax.set_title('Cluster disk usage')
-    fig.legend(loc='center right', frameon=False, reverse=True)
-    plt.show()
-
+    if args.save is True:
+        fig.savefig('laser_cooled_molecules.pdf')
+    else:
+        plt.show()
 
 if __name__ == "__main__":
     main()
