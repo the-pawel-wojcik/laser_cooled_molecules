@@ -15,6 +15,11 @@ diatomics = [
         Molecule(name='SrF', year=2010),
         Molecule(name='YO', year=2013),
         Molecule(name='CaF', year=2014),
+		Molecule(name='YbF', year=2018),
+		Molecule(name='BaH', year=2020),
+		Molecule(name='CaH', year=2022),
+		Molecule(name='BaF', year=2022),
+		Molecule(name='CaD', year=2024),
 ]
 
 triatomics = [
@@ -24,7 +29,7 @@ triatomics = [
 ]
 
 polyatomics = [
-    Molecule(name='CaOMe', year=2020),
+    Molecule(name='CaOCH$_3$', year=2020),
 ]
 
 def get_args():
