@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Iterator
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.ticker as mticker
 
 
 @dataclass
@@ -77,7 +78,7 @@ def main():
     ]
 
     years = np.arange(
-        start=min(year_of_molecules)-2,
+        start=min(year_of_molecules)-1,
         stop=max(year_of_molecules)+2,
         step=1,
         dtype=int,
@@ -150,8 +151,53 @@ def main():
         label='diatomics',
     )
 
+    for pos, molecule in enumerate(diatomics):
+        ax.text(
+            x=2025,
+            y=pos + 0.5,
+            s=molecule.name,
+            ha='left',
+            va='center',
+        )
+    for pos, molecule in enumerate(triatomics):
+        offset = len(diatomics)
+        ax.text(
+            x=2025,
+            y=offset + pos + 0.5,
+            s=molecule.name,
+            ha='left',
+            va='center',
+        )
+    for pos, molecule in enumerate(polyatomics):
+        offset = len(diatomics) + len(triatomics)
+        ax.text(
+            x=2025,
+            y=offset + pos + 0.5,
+            s=molecule.name,
+            ha='left',
+            va='center',
+        )
+
     ax.xaxis.set_label_text('Year')
     ax.yaxis.set_label_text('# of laser-cooled molecules')
+
+    ax.xaxis.set_major_locator(mticker.MaxNLocator(integer=True, prune='both'))
+    ax.yaxis.set_major_locator(mticker.MaxNLocator(integer=True))
+    ax.yaxis.set_minor_locator(mticker.MultipleLocator())
+
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    ax.grid(
+        visible=True,
+        which='both',
+        axis = 'y',
+        color='k',
+        lw=0.1,
+    )
+
+    ax.set_xlim(2009, 2025)
+    ax.set_ylim(0, len(diatomics + triatomics + polyatomics))
 
     plt.legend()
     if args.save is True:
