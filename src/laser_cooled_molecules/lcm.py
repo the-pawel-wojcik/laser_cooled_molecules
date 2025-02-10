@@ -205,12 +205,14 @@ def main():
         visible=True,
         which='both',
         axis = 'y',
-        color='k',
-        lw=0.1,
+        color='gray',
+        lw=0.2,
+        ls=':',
+        # alpha='0.5',
     )
 
     ax.set_xlim(2009, 2025)
-    ax.set_ylim(0, len(diatomics + triatomics + polyatomics))
+    ax.set_ylim(0, len(diatomics + triatomics + polyatomics)+0.2)
 
     plt.legend()
     if args.save is True:
