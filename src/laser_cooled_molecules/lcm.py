@@ -4,33 +4,43 @@ from typing import Iterator
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.ticker as mticker
+import matplotlib
+from datetime import date
 
+alt_colors = [
+    '#0F9D58', # Green
+    '#F4B400', # Yellow
+    '#4285F4', # Blue
+    '#DB4437', # Red
+]
+matplotlib.rcParams['font.family'] = 'Roboto'
+matplotlib.rcParams['axes.prop_cycle'] = matplotlib.cycler(color=alt_colors)
 
 @dataclass
 class Molecule:
     """ Name and year of first laser cooling of a molecule. """
     name: str
-    year: int
+    date: date
 
 diatomics = [
-        Molecule(name='SrF', year=2010),
-        Molecule(name='YO', year=2013),
-        Molecule(name='CaF', year=2014),
-		Molecule(name='YbF', year=2018),
-		Molecule(name='BaH', year=2020),
-		Molecule(name='CaH', year=2022),
-		Molecule(name='BaF', year=2022),
-		Molecule(name='CaD', year=2024),
+        Molecule(name='SrF', date=date(2010, 9, 19)),
+        Molecule(name='YO', date=date(2013, 4, 1)),
+        Molecule(name='CaF', date=date(2014, 5, 16)),
+		Molecule(name='YbF', date=date(2018, 3, 22)),
+		Molecule(name='BaH', date=date(2020, 8, 18)),
+		Molecule(name='CaH', date=date(2022, 8, 9)),
+		Molecule(name='BaF', date=date(2022, 3, 14)),
+		Molecule(name='CaD', date=date(2024, 8, 5)),
 ]
 
 triatomics = [
-    Molecule(name='SrOH', year=2017),
-    Molecule(name='YbOH', year=2020),
-    Molecule(name='CaOH', year=2020),
+    Molecule(name='SrOH', date=date(2017, 4, 24)),
+    Molecule(name='YbOH', date=date(2020, 2, 19)),
+    Molecule(name='CaOH', date=date(2020, 3, 31)),
 ]
 
 polyatomics = [
-    Molecule(name='CaOCH$_3$', year=2020),
+    Molecule(name='CaOCH$_3$', date=date(2020, 9, 11)),
 ]
 
 def get_args():
@@ -46,16 +56,19 @@ def get_args():
     return args
 
 
-def accumulate_by_year(yit: Iterator[int], mit: Iterator[Molecule]):
+def accumulate_by_year(
+    yit: Iterator[int],
+    mit: Iterator[Molecule],
+) -> list[int]:
     mol_cnt_accumulated = [] 
-    year = next(yit)
+    out_year = next(yit)
     molecule = next(mit)
     counter = 0
     while True:
-        if year < molecule.year:
+        if out_year < molecule.date.year:
             mol_cnt_accumulated += [counter]
             try:
-                year = next(yit)
+                out_year = next(yit)
             except StopIteration:
                 raise RuntimeError("End of years before end of molecules.")
             continue
@@ -65,7 +78,7 @@ def accumulate_by_year(yit: Iterator[int], mit: Iterator[Molecule]):
             molecule = next(mit)
         except StopIteration:
             mol_cnt_accumulated += [counter]
-            for year in yit:
+            for out_year in yit:
                 mol_cnt_accumulated += [counter]
             break
     return mol_cnt_accumulated
@@ -73,13 +86,13 @@ def accumulate_by_year(yit: Iterator[int], mit: Iterator[Molecule]):
 
 def main():
     args = get_args()
-    year_of_molecules = [
-        molecule.year for molecule in diatomics + triatomics + polyatomics
+    timeline = [
+        molecule.date.year for molecule in diatomics + triatomics + polyatomics
     ]
 
     years = np.arange(
-        start=min(year_of_molecules)-1,
-        stop=max(year_of_molecules)+2,
+        start=min(timeline)-1,
+        stop=max(timeline)+2,
         step=1,
         dtype=int,
     )
