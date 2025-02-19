@@ -135,7 +135,7 @@ def main():
 
 
     ax.xaxis.set_label_text('Year')
-    ax.yaxis.set_label_text('# of laser-cooled molecules')
+    ax.yaxis.set_label_text('# laser-cooled molecules')
 
     ax.xaxis.set_major_locator(mticker.MaxNLocator(integer=True, prune='both'))
     ax.yaxis.set_major_locator(mticker.MaxNLocator(integer=True))
@@ -143,6 +143,16 @@ def main():
 
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_linewidth(1.35)
+
+    ax.tick_params(
+        right=False,
+        left=False,
+        axis='y',
+        length=0,
+        which='both',
+    )
 
     ax.grid(
         visible=True,
